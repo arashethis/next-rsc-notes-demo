@@ -2,10 +2,9 @@
 
 import React, { Suspense } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 import SearchField from 'components/search'
-import NoteList from 'components/note-list'
 import NoteListSkeleton from 'components/note-list-skeleton'
+import Notes from 'components/notes'
 
 type Note = {
   id: string
@@ -16,7 +15,7 @@ type Note = {
 
 export default function Sidebar({
   children,
-  notes
+  notes,
 }: {
   children: React.ReactNode
   notes: Note[]
@@ -44,17 +43,10 @@ export default function Sidebar({
         </section>
         <nav>
           <Suspense fallback={<NoteListSkeleton />}>
-            <Notes notes={notes} />
+            <Notes notes={notes}/>
           </Suspense>
         </nav>
       </section>
     </>
   )
-}
-
-function Notes({ notes }: { notes: Note[] }) {
-  const searchParams = useSearchParams()
-  const search = searchParams.get('q')
-
-  return <NoteList notes={notes} searchText={search} />
 }

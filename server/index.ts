@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-// 从服务器目录下的types文件夹导入Note类型
 import { Note } from '../types/note';
 import pool from './db';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
