@@ -1,8 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import fs from 'fs';
-import path from 'path';
+// 从服务器目录下的types文件夹导入Note类型
 import { Note } from '../types/note';
+import pool from './db';
+import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -11,95 +12,92 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-// 数据文件路径
-const dataFilePath = path.join(__dirname, 'data', 'notes.json');
-
-// 读取笔记数据
-const readNotesData = (): Note[] => {
-  try {
-    const data = fs.readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading notes data:', error);
-    return [];
-  }
-};
-
-// 写入笔记数据
-const writeNotesData = (notes: Note[]): void => {
-  try {
-    fs.writeFileSync(dataFilePath, JSON.stringify(notes, null, 2), 'utf8');
-  } catch (error) {
-    console.error('Error writing notes data:', error);
-  }
-};
-
 // 获取所有笔记
-app.get('/api/notes', (req, res) => {
-  const notes = readNotesData();
-  res.json(notes);
+app.get('/api/notes', async (req, res) => {
+  try {
+    const [notes] = await pool.query<(Note & RowDataPacket)[]>('SELECT * FROM notes ORDER BY updated_at DESC');
+    res.json(notes);
+  } catch (error) {
+    console.error('Error fetching notes:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 // 获取单个笔记
-app.get('/api/notes/:id', (req, res) => {
-  const notes = readNotesData();
-  const note = notes.find((n) => n.id === req.params.id);
-  
-  if (!note) {
-    return res.status(404).json({ message: 'Note not found' });
+app.get('/api/notes/:id', async (req, res) => {
+  try {
+    const [notes] = await pool.query<(Note & RowDataPacket)[]>('SELECT * FROM notes WHERE id = ?', [req.params.id]);
+    
+    if (notes.length === 0) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+    
+    res.json(notes[0]);
+  } catch (error) {
+    console.error('Error fetching note:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-  
-  res.json(note);
 });
 
 // 更新笔记
-app.put('/api/notes/:id', (req, res) => {
-  const notes = readNotesData();
-  const noteIndex = notes.findIndex((n) => n.id === req.params.id);
-  
-  if (noteIndex === -1) {
-    return res.status(404).json({ message: 'Note not found' });
+app.put('/api/notes/:id', async (req, res) => {
+  try {
+    const { title, body } = req.body;
+    const updated_at = Date.now();
+    
+    const [result] = await pool.query<ResultSetHeader>(
+      'UPDATE notes SET title = ?, body = ?, updated_at = ? WHERE id = ?',
+      [title, body, updated_at, req.params.id]
+    );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+    
+    const [updatedNote] = await pool.query<(Note & RowDataPacket)[]>('SELECT * FROM notes WHERE id = ?', [req.params.id]);
+    res.json(updatedNote[0]);
+  } catch (error) {
+    console.error('Error updating note:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-  
-  const updatedNote: Note = {
-    ...notes[noteIndex],
-    ...req.body,
-    updated_at: Date.now()
-  };
-  
-  notes[noteIndex] = updatedNote;
-  writeNotesData(notes);
-  
-  res.json(updatedNote);
 });
 
 // 创建笔记
-app.post('/api/notes', (req, res) => {
-  const notes = readNotesData();
-  const newNote: Note = {
-    id: Date.now().toString(),
-    title: req.body.title || 'Untitled',
-    body: req.body.body || '',
-    updated_at: Date.now()
-  };
-  
-  notes.push(newNote);
-  writeNotesData(notes);
-  
-  res.status(201).json(newNote);
+app.post('/api/notes', async (req, res) => {
+  try {
+    const newNote: Note = {
+      id: Date.now().toString(),
+      title: req.body.title || 'Untitled',
+      body: req.body.body || '',
+      updated_at: Date.now()
+    };
+    
+    await pool.query<ResultSetHeader>(
+      'INSERT INTO notes (id, title, body, updated_at) VALUES (?, ?, ?, ?)',
+      [newNote.id, newNote.title, newNote.body, newNote.updated_at]
+    );
+    
+    res.status(201).json(newNote);
+  } catch (error) {
+    console.error('Error creating note:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 // 删除笔记
-app.delete('/api/notes/:id', (req, res) => {
-  const notes = readNotesData();
-  const filteredNotes = notes.filter((n) => n.id !== req.params.id);
-  
-  if (filteredNotes.length === notes.length) {
-    return res.status(404).json({ message: 'Note not found' });
+app.delete('/api/notes/:id', async (req, res) => {
+  try {
+    const [result] = await pool.query<ResultSetHeader>('DELETE FROM notes WHERE id = ?', [req.params.id]);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+    
+    res.json({ message: 'Note deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting note:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-  
-  writeNotesData(filteredNotes);
-  res.json({ message: 'Note deleted successfully' });
 });
 
 app.listen(PORT, () => {
