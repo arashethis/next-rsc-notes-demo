@@ -3,7 +3,7 @@ import './style.css'
 import React from 'react'
 import Sidebar from 'components/sidebar'
 import AddButton from 'components/add-button'
-import { Note } from '../..types/note'
+import { Note } from '../../types/note'
 import { getNotes } from 'libs/apis'
 
 export const metadata = {
