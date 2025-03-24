@@ -21,5 +21,5 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     )
   }
 
-  return <NoteUI note={note} isEditing={false} />
+  return <NoteUI note={note} />
 }

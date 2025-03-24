@@ -25,13 +25,13 @@ export async function saveNote(
   
   await saveNoteApi(payload);
 
-  revalidatePath('/')
+  revalidatePath('/note')
   redirect(`/note/${noteId}`)
 }
 
 export async function deleteNote(noteId: string) {
   await deleteNoteApi(noteId);
 
-  revalidatePath('/')
-  redirect('/')
+  revalidatePath('/note')
+  redirect('/note')
 }

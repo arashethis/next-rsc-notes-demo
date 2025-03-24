@@ -1,4 +1,4 @@
-import NoteUI from 'components/note-ui'
+import NoteEditor from 'components/note-editor'
 
 export const metadata = {
   robots: {
@@ -12,5 +12,5 @@ export default async function EditPage() {
     body: ''
   }
 
-  return <NoteUI note={defaultNote} isEditing={true} />
+  return <NoteEditor noteId={null} initialTitle={defaultNote.title} initialBody={defaultNote.body} />
 }

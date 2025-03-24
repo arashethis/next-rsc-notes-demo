@@ -4,28 +4,18 @@ import marked from 'marked'
 import ClientSidebarNote from './sidebar-note'
 import { load } from 'cheerio'
 
-export default function NoteList({ notes, searchText }) {
+export default function NoteList({ notes }) {
   if (notes.length === 0) {
-    return (
-      <div className="notes-empty">
-        {searchText
-          ? `Couldn't find any notes titled "${searchText}".`
-          : 'No notes created yet!'}{' '}
-      </div>
-    )
+    return <div className="notes-empty">No notes created yet!</div>
   }
 
   return (
     <ul className="notes-list">
-      {notes.map((note) =>
-        note &&
-        (!searchText ||
-          note.title.toLowerCase().includes(searchText.toLowerCase())) ? (
-          <li key={note.id}>
-            <SidebarNote note={note} />
-          </li>
-        ) : null
-      )}
+      {notes.map((note) => (
+        <li key={note.id}>
+          <SidebarNote note={note} />
+        </li>
+      ))}
     </ul>
   )
 }

@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default async function AddButton({
   children,
   noteId
@@ -9,7 +11,7 @@ export default async function AddButton({
 
   return (
     // Use hard link
-    <a href={`/note/edit/${noteId || ''}`} className="link--unstyled">
+    <Link href={`/note/edit/${noteId || ''}`} className="link--unstyled">
       <button
         className={[
           'edit-button',
@@ -19,6 +21,6 @@ export default async function AddButton({
       >
         {children}
       </button>
-    </a>
+    </Link>
   )
 }

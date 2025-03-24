@@ -1,15 +1,10 @@
 import { format } from 'date-fns'
 import NotePreview from 'components/note-preview'
-import NoteEditor from 'components/note-editor'
 import AddButton from 'components/add-button'
 
-export default async function NoteUI({ note, isEditing }) {
+export default async function NoteUI({ note }) {
   const { id, title, body, updated_at } = note
   const updatedAt = new Date(updated_at || 0)
-
-  if (isEditing) {
-    return <NoteEditor noteId={id} initialTitle={title} initialBody={body} />
-  }
 
   return (
     <div className="note">

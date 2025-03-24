@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import NotePreview from './note-preview'
 import { useFormStatus } from 'react-dom'
-import { deleteNote, saveNote } from '../app/actions'
+import { deleteNote, saveNote } from '../app/note/actions'
 
 export default function NoteEditor({
   noteId,

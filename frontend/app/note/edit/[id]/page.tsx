@@ -1,14 +1,10 @@
-import NoteUI from 'components/note-ui'
+import NoteEditor from 'components/note-editor'
 import { getNote } from 'libs/apis'
 
 export const metadata = {
   robots: {
     index: false
   }
-}
-
-type Note = {
-  id: string
 }
 
 export default async function EditPage(props: { params: Promise<{ id: string }> }) {
@@ -25,5 +21,5 @@ export default async function EditPage(props: { params: Promise<{ id: string }> 
     )
   }
 
-  return <NoteUI note={note} isEditing />
+  return <NoteEditor noteId={note.id} initialTitle={note.title} initialBody={note.body} />
 }

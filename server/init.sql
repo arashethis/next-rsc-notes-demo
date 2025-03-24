@@ -1,4 +1,10 @@
--- Active: 1742798085939@@localhost@3306@learning
+-- 创建数据库如果不存在
+CREATE DATABASE IF NOT EXISTS learning;
+
+-- 使用新创建的数据库
+USE learning;
+
+-- Active: 1742830539769@@localhost@3306
 CREATE TABLE IF NOT EXISTS notes (
   id VARCHAR(255) PRIMARY KEY,
   title VARCHAR(255) NOT NULL,

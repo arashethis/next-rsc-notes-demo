@@ -1,10 +1,7 @@
-'use client'
-
 import React, { Suspense } from 'react'
 import Link from 'next/link'
-import SearchField from 'components/search'
 import NoteListSkeleton from 'components/note-list-skeleton'
-import Notes from 'components/notes'
+import NoteList from 'components/note-list'
 
 type Note = {
   id: string
@@ -38,12 +35,11 @@ export default function Sidebar({
           </section>
         </Link>
         <section className="sidebar-menu" role="menubar">
-          <SearchField />
           {children}
         </section>
         <nav>
           <Suspense fallback={<NoteListSkeleton />}>
-            <Notes notes={notes}/>
+            <NoteList notes={notes} />
           </Suspense>
         </nav>
       </section>
