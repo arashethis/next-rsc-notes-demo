@@ -26,11 +26,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="container">
-          <div className="main">
-            {children}
-          </div>
-        </div>
+        {children}
       </body>
     </html>
   )

@@ -5,11 +5,11 @@ import { Note } from '../../../types/note'
 import { getNotes } from 'libs/apis'
 
 export default async function NoteLayout({
-  children,
+  children
 }: {
   children: React.ReactNode
 }) {
-  const notes = await getNotes();
+  const notes = await getNotes()
   const notesArray: Note[] = notes
     ? (Object.values(notes) as Note[]).sort(
         (a, b) => Number(b.id) - Number(a.id)
@@ -17,11 +17,13 @@ export default async function NoteLayout({
     : []
 
   return (
-    <>
-      <Sidebar notes={notesArray}>
-        <AddButton noteId={null}>Add</AddButton>
-      </Sidebar>
-      <section className="col note-viewer">{children}</section>
-    </>
+    <div className="container">
+      <div className="main">
+        <Sidebar notes={notesArray}>
+          <AddButton noteId={null}>Add</AddButton>
+        </Sidebar>
+        <section className="col note-viewer">{children}</section>
+      </div>
+    </div>
   )
 }
