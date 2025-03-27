@@ -6,11 +6,11 @@ const menus = [
   //   label: 'React Notes',
   //   href: '/note'
   // },
-   {
-    title: 'Client Counter',
-    label: 'Client Component',
-    href: '/client-counter'
-  },
+  //  {
+  //   title: 'Client Counter',
+  //   label: 'Client Component',
+  //   href: '/client-counter'
+  // },
 
   {
     title: 'Zero Bundle Size',

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import inspirations from './inspirations'
-// import FancyText from './FancyText'
+import FancyText from './FancyText'
 
 export default function InspirationGenerator({ children }) {
   const [index, setIndex] = useState(0)
@@ -12,7 +12,7 @@ export default function InspirationGenerator({ children }) {
   return (
     <>
       <p>Your inspirational quote is:</p>
-      {/* <FancyText text={quote} /> */}
+      <FancyText text={quote} />
       <button onClick={next}>Inspire me again</button>
       {children}
     </>
